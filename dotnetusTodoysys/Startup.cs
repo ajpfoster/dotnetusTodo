@@ -1,20 +1,14 @@
+using TodosApi.Models;
+using TodosApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore;
-using TodoApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
-namespace dotnetusTodoysys
+namespace TodosApi
 {
     public class Startup
     {
@@ -28,8 +22,14 @@ namespace dotnetusTodoysys
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<TodoContext>(opt =>
-                                               opt.UseInMemoryDatabase("TodoList"));
+            services.Configure<TodoDatabaseSettings>(
+                Configuration.GetSection(nameof(TodoDatabaseSettings)));
+
+            services.AddSingleton<ITodoDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<TodoDatabaseSettings>>().Value);
+
+            services.AddSingleton<TodoService>();
+
             services.AddControllers();
         }
 
