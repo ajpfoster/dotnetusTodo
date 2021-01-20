@@ -15,6 +15,8 @@ namespace TodosApi.Services
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
 
+            System.Diagnostics.Debug.WriteLine("Log: " + (database));
+
             _todos = database.GetCollection<Todo>(settings.TodosCollectionName);
         }
 
